@@ -4,64 +4,64 @@ use SpotifyWebAPI;
 
 class SpotifyController extends Controller {
 
-	/*
-	|--------------------------------------------------------------------------
-	| Home Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller renders your application's "dashboard" for users that
-	| are authenticated. Of course, you are free to change or remove the
-	| controller as you wish. It is just here to get your app started!
-	|
-	*/
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+    }
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-	}
+    public function index()
+    {
+        $api = new SpotifyWebAPI\SpotifyWebAPI();
+        $session = \Session::get('spotify.session');
 
-	public function authorize()
-	{
-		$session = new SpotifyWebAPI\Session(getenv('SPOTIFY_CLIENT_ID'), getenv('SPOTIFY_CLIENT_SECRET'), getenv('SPOTIFY_REDIRECT_URI'));
+        // Set the access token on the API wrapper
+        $api->setAccessToken($session->getAccessToken());
 
-		$scopes = array(
-		    'playlist-read-private',
-		    'user-read-private'
-		);
+        $search = $api->search('Homeworld', 'track');
 
-		$authorizeUrl = $session->getAuthorizeUrl(array(
-		    'scope' => $scopes
-		));
+        dd($search);
+        return view('spotify.index');
+    }
 
-		header('Location: ' . $authorizeUrl);
-	}
+    /**
+     * Authorize method to initiate Spotify API access
+     *
+     * @return redirect
+     */
+    public function authorize()
+    {
+        $session = new SpotifyWebAPI\Session(getenv('SPOTIFY_CLIENT_ID'), getenv('SPOTIFY_CLIENT_SECRET'), getenv('SPOTIFY_REDIRECT_URI'));
 
-	/**
-	 * Show the application dashboard to the user.
-	 *
-	 * @return Response
-	 */
-	public function callback()
-	{
-		$session = new SpotifyWebAPI\Session(getenv('SPOTIFY_CLIENT_ID'), getenv('SPOTIFY_CLIENT_SECRET'), getenv('SPOTIFY_REDIRECT_URI'));
-		$api = new SpotifyWebAPI\SpotifyWebAPI();
+        $scopes = array(
+            'playlist-read-private',
+            'user-read-private'
+        );
 
-		// Request a access token using the code from Spotify
-		$session->requestAccessToken($_GET['code']);
-		$accessToken = $session->getAccessToken();
+        $authorizeUrl = $session->getAuthorizeUrl(array(
+            'scope' => $scopes
+        ));
 
-		// Set the access token on the API wrapper
-		$api->setAccessToken($accessToken);
+        return redirect($authorizeUrl);
+    }
 
-		$search = $api->search('feel good', 'track');
+    /**
+     * Callback method for the Spotify API response
+     *
+     * @return Response
+     */
+    public function callback()
+    {
+        $session = new SpotifyWebAPI\Session(getenv('SPOTIFY_CLIENT_ID'), getenv('SPOTIFY_CLIENT_SECRET'), getenv('SPOTIFY_REDIRECT_URI'));
 
-		dd($search);
+        // Request a access token using the code from Spotify
+        $session->requestAccessToken(\Input::get('code'));
+        \Session::put('spotify.session', $session);
 
-		return view('spotify.callback');
-	}
+        return redirect('/');
+    }
 
 }

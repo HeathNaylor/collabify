@@ -11,11 +11,12 @@
 |
 */
 
-Route::get('/', 'SpotifyController@authorize');
+Route::resource('/', 'SpotifyController');
+Route::get('/spotify/auth', 'SpotifyController@authorize');
 
 Route::get('home', 'HomeController@index');
 
-Route::get('callback', 'SpotifyController@callback');
+Route::get('spotify/callback', 'SpotifyController@callback');
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',
