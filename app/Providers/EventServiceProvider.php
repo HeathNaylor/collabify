@@ -10,11 +10,7 @@ class EventServiceProvider extends ServiceProvider {
 	 *
 	 * @var array
 	 */
-	protected $listen = [
-		'event.name' => [
-			'EventListener',
-		],
-	];
+	protected $listen = [];
 
 	/**
 	 * Register any other events for your application.
@@ -26,7 +22,10 @@ class EventServiceProvider extends ServiceProvider {
 	{
 		parent::boot($events);
 
-		//
+		\Event::listen('generic', function($event)
+        {
+            return \BrainSocket::message('test',array('message'=>'A message from a generic event fired in Laravel!'));
+        });
 	}
 
 }

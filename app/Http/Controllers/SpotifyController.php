@@ -23,7 +23,8 @@ class SpotifyController extends Controller {
 
         $search = $api->search('Homeworld', 'track');
 
-        dd($search);
+        $playlist = $api->getUserPlaylist('bythepixelradio', '08uuHzyR5eMuBuI6O4e8EV');
+
         return view('spotify.index');
     }
 
