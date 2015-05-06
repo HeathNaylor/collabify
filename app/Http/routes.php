@@ -13,6 +13,7 @@
 
 Route::resource('/', 'SpotifyController');
 Route::get('/spotify/auth', 'SpotifyController@authorize');
+Route::get('/spotify/playlists', ['as' => 'spotify-playlists', 'uses' => 'SpotifyController@getPlaylists']);
 
 Route::get('home', 'HomeController@index');
 

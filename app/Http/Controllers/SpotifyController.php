@@ -11,21 +11,31 @@ class SpotifyController extends Controller {
      */
     public function __construct()
     {
+        $this->api = new SpotifyWebAPI\SpotifyWebAPI();
     }
 
     public function index()
     {
-        $api = new SpotifyWebAPI\SpotifyWebAPI();
         $session = \Session::get('spotify.session');
 
         // Set the access token on the API wrapper
-        $api->setAccessToken($session->getAccessToken());
+        $this->api->setAccessToken($session->getAccessToken());
 
-        $search = $api->search('Homeworld', 'track');
+        $search = $this->api->search('Homeworld', 'track');
 
-        $playlist = $api->getUserPlaylist('bythepixelradio', '08uuHzyR5eMuBuI6O4e8EV');
+        $playlist = $this->api->getUserPlaylist('bythepixelradio', '08uuHzyR5eMuBuI6O4e8EV');
 
         return view('spotify.index');
+    }
+
+    public function getPlaylists()
+    {
+        $session = \Session::get('spotify.session');
+        $this->api->setAccessToken($session->getAccessToken());
+        $playlists = $this->api->getUserPlaylists('bythepixelradio');
+        $playlists = $this->api->getUserPlaylists('testamentband');
+
+        return response()->json(json_encode($playlists));
     }
 
     /**
