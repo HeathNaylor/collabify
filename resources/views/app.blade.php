@@ -58,5 +58,28 @@
 	<!-- Scripts -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	{!! \HTML::script('js/all.js') !!}
+
+	<!--AngularJS-->
+	{!! \HTML::script('https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.min.js') !!}
+	{!! \HTML::script('js/app.js') !!}
+
+	<script>
+		window.app = {};
+
+		app.BrainSocket = new BrainSocket(
+		        new WebSocket('ws://project.local:8080'),
+		        new BrainSocketPubSub()
+		);
+
+		app.BrainSocket.Event.listen('test',function(msg)
+		{
+		    console.log(msg);
+		});
+
+		setTimeout(function() {
+			app.BrainSocket.message('generic','test');
+		}, 5000);
+	</script>
 </body>
 </html>

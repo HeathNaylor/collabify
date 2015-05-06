@@ -1,18 +1,24 @@
-{!! \HTML::script('js/brain-socket.min.js') !!}
-<script>
-	window.app = {};
-
-	app.BrainSocket = new BrainSocket(
-	        new WebSocket('ws://project.local:8080'),
-	        new BrainSocketPubSub()
-	);
-
-	app.BrainSocket.Event.listen('test',function(msg)
-	{
-	    console.log(msg);
-	});
-
-	setTimeout(function() {
-		app.BrainSocket.message('generic','test');
-	}, 5000);
-</script>
+@extends('app')
+@section('content')
+<div class="container" ng-app="collabifyApp" ng-controller="spotifyController" ng-model="loading" ng-hide="loading">
+	<h1>Playlists</h1>
+	<div class="row" ng-model="playlists">
+		<div class="col-md-4">
+			<table class="table table-striped" ng-hide="!playlists.items.length">
+				<tr>
+					<th>Playlist name</th>
+					<th>Songs</th>
+				</tr>
+				<tr ng-repeat='playlist in playlists.items'>
+				{{-- <tr> --}}
+					<td><% playlist.name %></td>
+					<td><% playlist.tracks.total %></td>
+				</tr>
+			</table>
+			<div ng-hide="playlists.items.length">
+				No Playlists
+			</div>
+		</div>
+	</div>
+</div>
+@stop
